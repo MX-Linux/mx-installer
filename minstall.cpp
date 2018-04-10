@@ -1797,6 +1797,7 @@ void MInstall::pageDisplayed(int next)
     case 3:
         foreach (const QString &arg, args) {
             if(arg == "--pretend" || arg == "-p") {
+                buildServiceList(); // build anyway
                 gotoPage(4);
                 return;
             }
@@ -1838,6 +1839,7 @@ void MInstall::pageDisplayed(int next)
         system("make-fstab -s");
         system("/sbin/swapon -a 2>&1");
         installLinux();
+        buildServiceList();
         break;
 
     case 4:
@@ -2008,8 +2010,8 @@ void MInstall::buildServiceList()
         QString category, description;
         category = list.at(0);
         description = list.at(1);
-        QString val = getCmdValue("dpkg -s " + service + " | grep '^Status'", "ok", " ", " ");
-        if (val == "installed") {
+
+        if (QFile("/etc/init.d/" + service).exists()) {
             QList<QTreeWidgetItem *> found_items = csView->findItems(category, Qt::MatchExactly, 0);
             QTreeWidgetItem *top_item;
             QTreeWidgetItem *item;
@@ -2082,7 +2084,6 @@ void MInstall::on_abortInstallButton_clicked()
 // clicking advanced button to go to Services page
 void MInstall::on_viewServicesButton_clicked()
 {
-    buildServiceList();
     gotoPage(5);
 }
 
@@ -2468,16 +2469,23 @@ void MInstall::on_saveHomeCheck_toggled(bool checked)
 void MInstall::setupkeyboardbutton()
 {
     QString kb;
-    kb = getCmdOut("grep XKBLAYOUT /etc/default/keyboard");
+    kb = getCmdOut("grep XKBMODEL /etc/default/keyboard");
     kb = kb.section('=', 1);
     kb = kb.section(',', 0, 0);
     kb.remove(QChar('"'));
     QString kb2;
-    kb2 = getCmdOut("grep XKBVARIANT /etc/default/keyboard");
+    kb2 = getCmdOut("grep XKBLAYOUT /etc/default/keyboard");
     kb2 = kb2.section('=', 1);
     kb2 = kb2.section(',', 0, 0);
     kb2.remove(QChar('"'));
-    buttonSetKeyboard->setText(kb + " " + kb2);
+    QString kb3;
+    kb3 = getCmdOut("grep XKBVARIANT /etc/default/keyboard");
+    kb3 = kb3.section('=', 1);
+    kb3 = kb3.section(',', 0, 0);
+    kb3.remove(QChar('"'));
+    labelModel->setText(kb);
+    labelLayout->setText(kb2);
+    labelVariant->setText(kb3);
 }
 
 void MInstall::on_buttonSetKeyboard_clicked()
