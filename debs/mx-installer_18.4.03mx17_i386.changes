@@ -1,0 +1,28 @@
+Format: 1.8
+Date: Sun, 08 Apr 2018 20:08:53 -0400
+Source: mx-installer
+Binary: mx-installer
+Architecture: i386
+Version: 18.4.03mx17
+Distribution: mx
+Urgency: medium
+Maintainer: Adrian <adrian@mxlinux.org>
+Changed-By: dolphinoracle <dolphin@mx>
+Description:
+ mx-installer - GUI installer for MX Linux.
+Changes:
+ mx-installer (18.4.03mx17) mx; urgency=medium
+ .
+   *  new services module (adrian)
+Checksums-Sha1:
+ eb9aeb2809a49d20cc02fee1b1c8b16fab8c0f72 946050 mx-installer-dbgsym_18.4.03mx17_i386.deb
+ 5e81c0fb4984b4df3fcbaf3c5b90a14a7ff3b239 9453 mx-installer_18.4.03mx17_i386.buildinfo
+ 180bd1cf725a8a84eba74d7ddca9f7d0949ff9f2 418336 mx-installer_18.4.03mx17_i386.deb
+Checksums-Sha256:
+ bd5d934b683881179e51c6832d17bbdc620e77c0541c8e0fc3ea0eba072950ce 946050 mx-installer-dbgsym_18.4.03mx17_i386.deb
+ 0a1ffa8ab6b54154f21e44ab6b2a3e04bb53525d6531dc2f86ea90fe531c0128 9453 mx-installer_18.4.03mx17_i386.buildinfo
+ d38fb070541a08a6df235b189a25064b30ed604da949673f52dc16926dffd0c9 418336 mx-installer_18.4.03mx17_i386.deb
+Files:
+ feff63f5baf4bce513e35c09c09f7317 946050 debug extra mx-installer-dbgsym_18.4.03mx17_i386.deb
+ ca06820e41635b5abb6d6888c8617b3f 9453 system optional mx-installer_18.4.03mx17_i386.buildinfo
+ 24e0c29da0f65f7632525f53e5048987 418336 system optional mx-installer_18.4.03mx17_i386.deb
