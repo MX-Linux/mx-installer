@@ -132,7 +132,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="Step_Terms">
       <layout class="QGridLayout">
@@ -1232,7 +1232,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Install GRUB for MX Linux and Windows</string>
+             <string>Install GRUB for Linux and Windows</string>
             </property>
             <property name="shortcut">
              <string>Alt+A</string>
@@ -2287,9 +2287,7 @@
              <enum>QFrame::Plain</enum>
             </property>
             <property name="plainText">
-             <string>Support MX Linux
-
-MX Linux is supported by people like you. Some help others at the support forum - https://forum.mxlinux.org, or translate help files into different languages, or make suggestions, write documentation, or help test new software.</string>
+             <string/>
             </property>
             <property name="overwriteMode">
              <bool>false</bool>

@@ -57,9 +57,12 @@ MInstall::MInstall(QWidget *parent, QStringList args) : QWidget(parent)
 
     computerNameEdit->setText(DEFAULT_HOSTNAME);
 
-    // timezone
+    // set some distro-centric text
 
     copyrightBrowser->setPlainText(tr("%1 is an independent Linux distribution based on Debian Stable.\n\n%1 uses some components from MEPIS Linux which are released under an Apache free license. Some MEPIS components have been modified for %1.\n\nEnjoy using %1").arg(PROJECTNAME));
+    remindersBrowser->setPlainText(tr("Support %1\n\n%1 is supported by people like you. Some help others at the support forum - %2, or translate help files into different languages, or make suggestions, write documentation, or help test new software.").arg(PROJECTNAME).arg(PROJECTFORUM));
+
+    // timezone
 
     timezoneCombo->clear();
     fp = popen("awk -F '\\t' '!/^#/ { print $3 }' /usr/share/zoneinfo/zone.tab | sort", "r");
@@ -167,7 +170,7 @@ MInstall::MInstall(QWidget *parent, QStringList args) : QWidget(parent)
     proc = new QProcess(this);
     timer = new QTimer(this);
 
-    rootLabelEdit->setText("root" + PROJECTSHORTNAME + " " + getCmdOut("lsb_release -rs"));
+    rootLabelEdit->setText("root" + PROJECTSHORTNAME + PROJECTVERSION);
 
     // if it looks like an apple...
     if (system("grub-probe -d /dev/sda2 2>/dev/null | grep hfsplus") == 0) {
@@ -1270,11 +1273,15 @@ bool MInstall::setUserName()
     replaceStringInFile("demo", userNameEdit->text(), "/mnt/antiX/etc/gshadow");
     replaceStringInFile("demo", userNameEdit->text(), "/mnt/antiX/etc/passwd");
     replaceStringInFile("demo", userNameEdit->text(), "/mnt/antiX/etc/shadow");
+    replaceStringInFile("demo", userNameEdit->text(), "/mnt/antiX/etc/slim.conf");
     replaceStringInFile("demo", userNameEdit->text(), "/mnt/antiX/etc/lightdm/lightdm.conf");
     if (autologinCheckBox->isChecked()) {
         replaceStringInFile("#auto_login", "auto_login", "/mnt/antiX/etc/slim.conf");
+        replaceStringInFile("#default_user ", "default_user ", "/mnt/antiX/etc/slim.conf");
     }
     else {
+        replaceStringInFile("auto_login", "#auto_login", "/mnt/antiX/etc/slim.conf");
+        replaceStringInFile("default_user ", "#default_user ", "/mnt/antiX/etc/slim.conf");
         replaceStringInFile("autologin-user=", "#autologin-user=", "/mnt/antiX/etc/lightdm/lightdm.conf");
     }
     cmd = QString("touch /mnt/antiX/var/mail/%1").arg(userNameEdit->text());
@@ -1399,10 +1406,10 @@ bool MInstall::setUserInfo()
                                  "2 characters long. Please select\n"
                                  "a longer name before proceeding."));
         return false;
-    } else if (!userNameEdit->text().contains(QRegExp("^[a-z_][a-z0-9_-]*[$]?$"))) {
+    } else if (!userNameEdit->text().contains(QRegExp("^[a-zA-Z_][a-zA-Z0-9_-]*[$]?$"))) {
         QMessageBox::critical(0, QString::null,
-                              tr("The user name needs be lower case and it\n"
-                                 "cannot contain special characters or spaces.\n"
+                              tr("The user name cannot contain special\n"
+                                 " characters or spaces.\n"
                                  "Please choose another name before proceeding."));
         return false;
     }
@@ -1600,15 +1607,21 @@ void MInstall::setLocale()
 
     // Set clock format
     if (radio12h->isChecked()) {
+        //mx systems
         system("sed -i '/data0=/c\\data0=%l:%M' /home/demo/.config/xfce4/panel/xfce4-orageclock-plugin-1.rc");
         system("sed -i '/data0=/c\\data0=%l:%M' /mnt/antiX/etc/skel/.config/xfce4/panel/xfce4-orageclock-plugin-1.rc");
-        system("sed -i '/data0=/c\\data0=%l:%M' /mnt/antiX/usr/local/share/appdata/panels/vertical/panel/xfce4-orageclock-plugin-1.rc");
-        system("sed -i '/data0=/c\\data0=%l:%M' /mnt/antiX/usr/local/share/appdata/panels/horizontal/panel/xfce4-orageclock-plugin-1.rc");
+        //antix systems
+        system("sed -i 's/%H:%M/%l:%M/g' /mnt/antiX/etc/skel/.icewm/preferences");
+        system("sed -i 's/%k:%M/%l:%M/g' /mnt/antiX/etc/skel/.fluxbox/init");
+        system("sed -i 's/%k:%M/%l:%M/g' /mnt/antiX/etc/skel/.jwm/tray");
     } else {
+        //mx systems
         system("sed -i '/data0=/c\\data0=%H:%M' /home/demo/.config/xfce4/panel/xfce4-orageclock-plugin-1.rc");
         system("sed -i '/data0=/c\\data0=%H:%M' /mnt/antiX/etc/skel/.config/xfce4/panel/xfce4-orageclock-plugin-1.rc");
-        system("sed -i '/data0=/c\\data0=%H:%M' /mnt/antiX/usr/local/share/appdata/panels/vertical/panel/xfce4-orageclock-plugin-1.rc");
-        system("sed -i '/data0=/c\\data0=%H:%M' /mnt/antiX/usr/local/share/appdata/panels/horizontal/panel/xfce4-orageclock-plugin-1.rc");
+        //antix systems
+        system("sed -i 's/%H:%M/%H:%M/g' /mnt/antiX/etc/skel/.icewm/preferences");
+        system("sed -i 's/%k:%M/%k:%M/g' /mnt/antiX/etc/skel/.fluxbox/init");
+        system("sed -i 's/%k:%M/%k:%M/g' /mnt/antiX/etc/skel/.jwm/tray");
     }
 
     // localize repos

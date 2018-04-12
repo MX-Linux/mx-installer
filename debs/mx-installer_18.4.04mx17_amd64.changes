@@ -1,0 +1,34 @@
+Format: 1.8
+Date: Wed, 11 Apr 2018 21:33:42 -0400
+Source: mx-installer
+Binary: mx-installer
+Architecture: source amd64
+Version: 18.4.04mx17
+Distribution: mx
+Urgency: medium
+Maintainer: Adrian <adrian@mxlinux.org>
+Changed-By: dolphinoracle <dolphin@mx>
+Description:
+ mx-installer - GUI installer for MX Linux.
+Changes:
+ mx-installer (18.4.04mx17) mx; urgency=medium
+ .
+   * misc. changes for antiX/mx
+Checksums-Sha1:
+ 2058f0ee75c4fd9081ed8803b680912290429a32 641 mx-installer_18.4.04mx17.dsc
+ 3839f1f4de5f47bdcd8d7c15ffac0c5ebd993097 3646932 mx-installer_18.4.04mx17.tar.xz
+ f0b8f513862c98d4ef3b9888551e768cbd0c166d 982856 mx-installer-dbgsym_18.4.04mx17_amd64.deb
+ ce1bbd5f169a3f88c7000a11bd69728f3c179122 10149 mx-installer_18.4.04mx17_amd64.buildinfo
+ 975690bd7725af1bc9f3a9bad0cc810173f0733e 412742 mx-installer_18.4.04mx17_amd64.deb
+Checksums-Sha256:
+ 8f1a4f74004e45fe712aaf9cb4fafce531df24d1aa69e288d899c660c6ff0479 641 mx-installer_18.4.04mx17.dsc
+ 6fa883d0b0b7b7f70aa216e4f35e03d4f49fb3468b03dd7305b9301f21ac03c7 3646932 mx-installer_18.4.04mx17.tar.xz
+ f2370145f680e6309325bcf487c976e8ad9f72acab9f93956d628c47e360fc52 982856 mx-installer-dbgsym_18.4.04mx17_amd64.deb
+ d00ae300f83e29c76b771aad0c7500ac71829a462b18f2c4ba5cc73e0d030ec5 10149 mx-installer_18.4.04mx17_amd64.buildinfo
+ c6c6f71764412312e8937054c845af43dea704895a38d5e7110c223d82465520 412742 mx-installer_18.4.04mx17_amd64.deb
+Files:
+ d8de6d73c33c898e6f7b59d592253d2e 641 system optional mx-installer_18.4.04mx17.dsc
+ 433eb6388733dd9d92e91d59715481f6 3646932 system optional mx-installer_18.4.04mx17.tar.xz
+ c9947a44edab15921bce1ddcb9f4fbc0 982856 debug optional mx-installer-dbgsym_18.4.04mx17_amd64.deb
+ 893250735b3e2d8a63acf53bf25beaa7 10149 system optional mx-installer_18.4.04mx17_amd64.buildinfo
+ d61829f3ad8f8958e423aaa30b720d13 412742 system optional mx-installer_18.4.04mx17_amd64.deb
