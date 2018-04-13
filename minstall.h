@@ -92,6 +92,7 @@ public:
     bool setUserName();
 
     bool INSTALL_FROM_ROOT_DEVICE;
+    bool POPULATE_MEDIA_MOUNTPOINTS;
     QString PROJECTNAME;
     QString PROJECTVERSION;
     QString PROJECTSHORTNAME;

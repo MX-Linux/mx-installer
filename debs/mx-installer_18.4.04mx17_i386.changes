@@ -15,14 +15,14 @@ Changes:
  .
    * misc. changes for antiX/mx
 Checksums-Sha1:
- cf4492cb13cc51dfd14c2671412caff8cd3320d5 946132 mx-installer-dbgsym_18.4.04mx17_i386.deb
- 5ce88a041ce2cd67e66d1bd03576077e21eaf6c9 9453 mx-installer_18.4.04mx17_i386.buildinfo
- a8dde13d360b1ce0836ef7db8850805fa8890bf6 418440 mx-installer_18.4.04mx17_i386.deb
+ 39748abf8f910bdc98dde0075e68caedf27a9846 945844 mx-installer-dbgsym_18.4.04mx17_i386.deb
+ acf38c809342ad61f7d62a3b1327f1d1d83eae38 9453 mx-installer_18.4.04mx17_i386.buildinfo
+ 0f4541c49840b8b1da7422801e66ce0e16bedb52 418734 mx-installer_18.4.04mx17_i386.deb
 Checksums-Sha256:
- 3337b02baddeb619e541ef9a47ce7b9c17eb5b9b5949a5c494d50ed16902a555 946132 mx-installer-dbgsym_18.4.04mx17_i386.deb
- 2b61736126c9b063dbe9873b71b095004c0e24075ac6026d549e5baecd0b73cb 9453 mx-installer_18.4.04mx17_i386.buildinfo
- de939f0b621284669e1ec9249e05c95330a2bff685ea7a778438f45cd0b22f4c 418440 mx-installer_18.4.04mx17_i386.deb
+ b020eca4e4c8d833f009b7724de3657ea55477445991ec99060c731ebf2df2ea 945844 mx-installer-dbgsym_18.4.04mx17_i386.deb
+ 027618d42fad22313df0cbe32630f12c844dca7f3cbb6dab96473fc388d25f4f 9453 mx-installer_18.4.04mx17_i386.buildinfo
+ af221f627ee47b0cc19b9ac0b519e7de3b1b6b321648095226684bb0b16484ff 418734 mx-installer_18.4.04mx17_i386.deb
 Files:
- ed6d64e6b86f15a88a544d7cbb7182f9 946132 debug extra mx-installer-dbgsym_18.4.04mx17_i386.deb
- 34bf8aabad0efd4fabeda1b67d8daecb 9453 system optional mx-installer_18.4.04mx17_i386.buildinfo
- 573527927ca6c5622a361e8bf7cae7e4 418440 system optional mx-installer_18.4.04mx17_i386.deb
+ 63b2e3daf56710c60ef54ec97c8a9450 945844 debug extra mx-installer-dbgsym_18.4.04mx17_i386.deb
+ 52d630b0c050231dc31aa3ab13db8497 9453 system optional mx-installer_18.4.04mx17_i386.buildinfo
+ 8759dd7a0c5be348f22aa98edc7c7417 418734 system optional mx-installer_18.4.04mx17_i386.deb

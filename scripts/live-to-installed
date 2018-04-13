@@ -2,7 +2,7 @@
 
 ME=${0##*/}
 
-PURGE_PACKAGES="live-init-mx"
+#PURGE_PACKAGES="live-init-mx"
 W_MANAGERS="fluxbox icewm jwm"
 PRETEND=
 
@@ -54,20 +54,22 @@ main() {
     local ds_startup="etc/desktop-session/startup"
     local rox_pb=".config/rox.sourceforge.net/ROX-Filer/pb_antiX-%s"
 
-    #del_line      "toram-eject"              $ds_startup
-    #del_line      "persist-config"           $ds_startup
-    #del_line_skel "gksu antixsources.sh"     ".%s/menu"
-    #del_line_skel "antixsources.desktop"     $rox_pb
-    #rm_file_skel  "Desktop/Installer"
+    del_line      "toram-eject"              $ds_startup
+    del_line      "persist-config"           $ds_startup
+    del_line_skel "gksu antixsources.sh"     ".%s/menu"
+    del_line_skel "antixsources.desktop"     $rox_pb
+    rm_file_skel  "Desktop/Installer"
 
-    #rm_file       etc/udev/rules.d/90-fstab-automount.rules
+    rm_file       etc/udev/rules.d/90-fstab-automount.rules
 
     cp_file       /usr/share/antiX/rc.local.install etc/rc.local
-    cp_file       /usr/share/antix-install/issue etc/issue
+    cp_file       /usr/share/antix/issue etc/issue
     #cp_file       /usr/share/slim/themes/antiX/slim-install.conf etc/slim.conf
 
     cp_dir        /etc/init.d/debian etc/init.d
     rm_dir        etc/init.d/debian
+
+    sed_line      's/^\s*(session\s+[^\s]+\s+pam_lastlog.so).*/\1/' etc/pam.d/login
 
     #idir_chroot   dpkg --purge $PURGE_PACKAGES
 

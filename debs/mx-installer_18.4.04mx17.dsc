@@ -10,8 +10,8 @@ Build-Depends: qt5-qmake, qt5-default, qttools5-dev-tools, debhelper (>= 9.20120
 Package-List:
  mx-installer deb system optional arch=any
 Checksums-Sha1:
- 3839f1f4de5f47bdcd8d7c15ffac0c5ebd993097 3646932 mx-installer_18.4.04mx17.tar.xz
+ a7124a203a05ad5ce2a375865b295ec94ec7ab9b 6369608 mx-installer_18.4.04mx17.tar.xz
 Checksums-Sha256:
- 6fa883d0b0b7b7f70aa216e4f35e03d4f49fb3468b03dd7305b9301f21ac03c7 3646932 mx-installer_18.4.04mx17.tar.xz
+ d52455ec461e34b273544dbb84608cc37500e342610ceaad6e54574b5c11a206 6369608 mx-installer_18.4.04mx17.tar.xz
 Files:
- 433eb6388733dd9d92e91d59715481f6 3646932 mx-installer_18.4.04mx17.tar.xz
+ 26c822683b8803bd3a61ff6bb799f8e9 6369608 mx-installer_18.4.04mx17.tar.xz

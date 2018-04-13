@@ -44,6 +44,7 @@ MInstall::MInstall(QWidget *parent, QStringList args) : QWidget(parent)
     MIN_ROOT_DEVICE_SIZE=settings.value("MIN_ROOT_DRIVE_SIZE").toString();
     DEFAULT_HOSTNAME=settings.value("DEFAULT_HOSTNAME").toString();
     ENABLE_SERVICES=settings.value("ENABLE_SERVICES").toStringList();
+    POPULATE_MEDIA_MOUNTPOINTS=settings.value("POPULATE_MEDIA_MOUNTPOINTS").toBool();
 
     //do not offer home folder encyrption if so configured in installer.conf
     QString OFFER_HOME_ENCRYPTION = getCmdOut("grep OFFER_HOME_ENCRYPTION /usr/share/installer-data/installer.conf |cut -d= -f2").simplified().toLower();
@@ -52,6 +53,15 @@ MInstall::MInstall(QWidget *parent, QStringList args) : QWidget(parent)
     encryptCheckBox->hide();
     }
 
+    //check for samba
+    QFileInfo info("/etc/init.d/smbd");
+    if ( !info.exists()) {
+        computerGroupLabel->setEnabled(false);
+        computerGroupEdit->setEnabled(false);
+        computerGroupEdit->setText("");
+        sambaCheckBox->setChecked(false);
+        sambaCheckBox->setEnabled(false);
+    }
 
     // set default host name
 
@@ -1114,14 +1124,18 @@ bool MInstall::installLoader()
     QString cmdline = getCmdOut("/live/bin/non-live-cmdline");
     cmdline.replace('\\', "\\\\");
     cmdline.replace('|', "\\|");
-    if (!is32bit()) {
-        cmdline.prepend("zswap.zpool=zsmalloc ");
-    }
+//    if (!is32bit()) {
+//        cmdline.prepend("zswap.zpool=zsmalloc ");
+//    }
     cmd = QString("sed -i -r 's|^(GRUB_CMDLINE_LINUX_DEFAULT=).*|\\1\"%1\"|' /mnt/antiX/etc/default/grub").arg(cmdline);
     system(cmd.toUtf8());
     // update grub config
     runCmd("chroot /mnt/antiX update-grub");
-    runCmd("/sbin/make-fstab --install /mnt/antiX");
+    if ( POPULATE_MEDIA_MOUNTPOINTS ) {
+        runCmd("/sbin/make-fstab --install /mnt/antiX --mntpnt=/media");
+    } else {
+        runCmd("/sbin/make-fstab --install /mnt/antiX");
+    }
     runCmd("chroot /mnt/antiX dev2uuid_fstab");
     runCmd("chroot /mnt/antiX update-initramfs -u -t -k all");
     system("umount /mnt/antiX/proc; umount /mnt/antiX/sys; umount /mnt/antiX/dev");
@@ -1249,7 +1263,7 @@ bool MInstall::setUserName()
     // saving Desktop changes
     if (saveDesktopCheckBox->isChecked()) {
         runCmd("su -c 'dconf reset /org/blueman/transfer/shared-path' demo"); //reset blueman path
-        cmd = QString("rsync -a /home/demo/ %1 --exclude '.cache' --exclude '.gvfs' --exclude '.dbus' --exclude '.Xauthority' --exclude '.ICEauthority' --exclude '.mozilla' --exclude 'Installer.desktop'").arg(dpath);
+        cmd = cmd = QString("rsync -a /home/demo/ %1 --exclude '.cache' --exclude '.gvfs' --exclude '.dbus' --exclude '.Xauthority' --exclude '.ICEauthority' --exclude '.mozilla' --exclude 'Installer.desktop' --exclude 'minstall.desktop' --exclude 'Desktop/antixsources.desktop' --exclude '.jwm/menu' --exclude '.icewm/menu' --exclude '.fluxbox/menu' --exclude '.config/rox.sourceforge.net/ROX-Filer/pb_antiX-fluxbox' --exclude '.config/rox.sourceforge.net/ROX-Filer/pb_antiX-icewm' --exclude '.config/rox.sourceforge.net/ROX-Filer/pb_antiX-jwm'").arg(dpath);
         if (runCmd(cmd.toUtf8()) != 0) {
             setCursor(QCursor(Qt::ArrowCursor));
             QMessageBox::critical(0, QString::null,
@@ -2040,10 +2054,6 @@ void MInstall::buildServiceList()
             item->setText(0, service);
             item->setText(1, description);
             item->setCheckState(0, Qt::Checked);
-        } else if (service == "samba") {
-            computerGroupLabel->setEnabled(false);
-            computerGroupEdit->setEnabled(false);
-            computerGroupEdit->setText("");
         }
     }
     csView->expandAll();
@@ -2364,20 +2374,15 @@ void MInstall::copyDone(int, QProcess::ExitStatus exitStatus)
             fclose(fp);
         }
         // Copy live set up to install and clean up.
-        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop");
-        system("/bin/rm /mnt/antiX/etc/skel/.config/xfce4/desktop/icons.screen0-958x752.rc");
-        //system("/bin/cp -fp /etc/init.d/debian/cron /mnt/antiX/etc/init.d/cron");
-        //system("/bin/cp -fp /etc/init.d/debian/gpm /mnt/antiX/etc/init.d/gpm");
-        //system("/bin/cp -fp /etc/init.d/debian/umountfs /mnt/antiX/etc/init.d/umountfs");
-        //system("/bin/cp -fp /etc/init.d/debian/sendsigs /mnt/antiX/etc/init.d/sendsigs");
-        //system("/bin/cp -fp /etc/init.d/debian/console-setup /mnt/antiX/etc/init.d/console-setup");
-        //system("/bin/cp -fp /usr/share/antix-install/issue /mnt/antiX/etc/issue");
+        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop/Installer.desktop");
+        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop/antixsources.desktop");
+        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop/minstall.desktop");
+        runCmd("chroot /mnt/antiX desktop-menu --write-out-global");
         system("/usr/sbin/live-to-installed /mnt/antiX");
-
         system("/bin/rm -rf /mnt/antiX/home/demo");
         system("/bin/rm -rf /mnt/antiX/media/sd*");
         system("/bin/rm -rf /mnt/antiX/media/hd*");
-        system("/bin/mv -f /mnt/antiX/etc/X11/xorg.conf /mnt/antiX/etc/X11/xorg.conf.live >/dev/null 2>&1");
+        //system("/bin/mv -f /mnt/antiX/etc/X11/xorg.conf /mnt/antiX/etc/X11/xorg.conf.live >/dev/null 2>&1");
 
         // guess localtime vs UTC
         if (getCmdOut("guess-hwclock") == "localtime") {
