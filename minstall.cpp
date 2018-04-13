@@ -2374,11 +2374,9 @@ void MInstall::copyDone(int, QProcess::ExitStatus exitStatus)
             fclose(fp);
         }
         // Copy live set up to install and clean up.
-        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop/Installer.desktop");
-        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop/antixsources.desktop");
-        system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop/minstall.desktop");
-        runCmd("chroot /mnt/antiX desktop-menu --write-out-global");
+        //system("/bin/rm -rf /mnt/antiX/etc/skel/Desktop");
         system("/usr/sbin/live-to-installed /mnt/antiX");
+        runCmd("chroot /mnt/antiX desktop-menu --write-out-global");
         system("/bin/rm -rf /mnt/antiX/home/demo");
         system("/bin/rm -rf /mnt/antiX/media/sd*");
         system("/bin/rm -rf /mnt/antiX/media/hd*");
