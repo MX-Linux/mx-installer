@@ -58,6 +58,7 @@ main() {
     del_line      "persist-config"           $ds_startup
     del_line_skel "antixsources.sh"          ".%s/menu"
     del_line_skel "antixsources.desktop"     $rox_pb
+    rm_file_skel "Desktop/Installer.desktop"
     rm_file_skel  "Desktop/Installer"
 
     rm_file       etc/udev/rules.d/90-fstab-automount.rules
