@@ -100,6 +100,8 @@ public:
     QString PROJECTFORUM;
     QString MIN_ROOT_DEVICE_SIZE;
     QString DEFAULT_HOSTNAME;
+    QString MIN_INSTALL_SIZE;
+    QString PREFERRED_MIN_INSTALL_SIZE;
     QStringList ENABLE_SERVICES;
 
     void setupkeyboardbutton();

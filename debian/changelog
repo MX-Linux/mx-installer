@@ -1,3 +1,9 @@
+mx-installer (18.4.06mx17) mx; urgency=medium
+
+  *  text changes
+
+ -- dolphinoracle <dolphin@mx>  Fri, 13 Apr 2018 22:52:04 -0400
+
 mx-installer (18.4.05mx17) mx; urgency=medium
 
   * misc. changes to sync up antiX/mx installs
