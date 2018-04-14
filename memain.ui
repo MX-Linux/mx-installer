@@ -108,7 +108,7 @@
        <property name="styleSheet">
         <string notr="true">background-color: rgba(255, 255, 255, 85);
 color: rgb(24, 12, 12);
-padding: 6px</string>
+padding: 8px</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>

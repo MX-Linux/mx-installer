@@ -1,3 +1,9 @@
+mx-installer (18.4.07mx17) mx; urgency=medium
+
+  * tweak to memain.ui 
+
+ -- dolphinoracle <dolphin@mx>  Sat, 14 Apr 2018 12:31:47 -0400
+
 mx-installer (18.4.06mx17) mx; urgency=medium
 
   *  text changes

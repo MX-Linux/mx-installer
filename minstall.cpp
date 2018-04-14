@@ -1822,6 +1822,7 @@ void MInstall::pageDisplayed(int next)
                                        "<p><b>Preferred Filesystem Type</b><br/>For %1, you may choose to format the partitions as ext2, ext3, ext4, jfs, xfs, btrfs or reiser. </p>"
                                        "<p><b>Bad Blocks</b><br/>If you choose ext2, ext3 or ext4 as the format type, you have the option of checking and correcting for bad blocks on the drive. "
                                        "The badblock check is very time consuming, so you may want to skip this step unless you suspect that your drive has bad blocks.</p>").arg(PROJECTNAME));
+        ((MMain *)mmn)->mainHelp->resize(((MMain *)mmn)->tab->size());
         break;
 
     case 3:
