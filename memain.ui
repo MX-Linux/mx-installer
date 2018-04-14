@@ -85,7 +85,7 @@
         </rect>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -107,7 +107,8 @@
        </property>
        <property name="styleSheet">
         <string notr="true">background-color: rgba(255, 255, 255, 85);
-color: rgb(24, 12, 12);</string>
+color: rgb(24, 12, 12);
+padding: 6px</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -125,7 +126,7 @@ color: rgb(24, 12, 12);</string>
         <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
        </property>
        <property name="readOnly">
         <bool>true</bool>

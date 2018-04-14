@@ -45,6 +45,8 @@ MInstall::MInstall(QWidget *parent, QStringList args) : QWidget(parent)
     DEFAULT_HOSTNAME=settings.value("DEFAULT_HOSTNAME").toString();
     ENABLE_SERVICES=settings.value("ENABLE_SERVICES").toStringList();
     POPULATE_MEDIA_MOUNTPOINTS=settings.value("POPULATE_MEDIA_MOUNTPOINTS").toBool();
+    MIN_INSTALL_SIZE=settings.value("MIN_INSTALL_SIZE").toString();
+    PREFERRED_MIN_INSTALL_SIZE=settings.value("PREFERRED_MIN_INSTALL_SIZE").toString();
 
     //do not offer home folder encyrption if so configured in installer.conf
     QString OFFER_HOME_ENCRYPTION = getCmdOut("grep OFFER_HOME_ENCRYPTION /usr/share/installer-data/installer.conf |cut -d= -f2").simplified().toLower();
@@ -1591,9 +1593,9 @@ void MInstall::setLocale()
 
     // /etc/localtime is either a file or a symlink to a file in /usr/share/zoneinfo. Use the one selected by the user.
     //replace with link
-    cmd = QString("ln -fs /usr/share/zoneinfo/%1 /mnt/antiX/etc/localtime").arg(timezoneCombo->currentText());
+    cmd = QString("ln -nfs /usr/share/zoneinfo/%1 /mnt/antiX/etc/localtime").arg(timezoneCombo->currentText());
     system(cmd.toUtf8());
-    cmd = QString("ln -fs /usr/share/zoneinfo/%1 /etc/localtime").arg(timezoneCombo->currentText());
+    cmd = QString("ln -nfs /usr/share/zoneinfo/%1 /etc/localtime").arg(timezoneCombo->currentText());
     system(cmd.toUtf8());
     // /etc/timezone is text file with the timezone written in it. Write the user-selected timezone in it now.
     cmd = QString("echo %1 > /mnt/antiX/etc/timezone").arg(timezoneCombo->currentText());
@@ -1797,14 +1799,15 @@ void MInstall::pageDisplayed(int next)
 
     switch (next) {
     case 1:
+
         setCursor(QCursor(Qt::ArrowCursor));
         ((MMain *)mmn)->setHelpText(tr("<p><b>General Instructions</b><br/>BEFORE PROCEEDING, CLOSE ALL OTHER APPLICATIONS.</p>"
                                        "<p>On each page, please read the instructions, make your selections, and then click on Next when you are ready to proceed. "
                                        "You will be prompted for confirmation before any destructive actions are performed.</p>"
-                                       "<p>Installation requires about 6 GB of space. 10 GB or more is preferred. "
+                                       "<p>Installation requires about %1 of space. %2 or more is preferred. "
                                        "You can use the entire disk or you can put the installation on existing partitions. </p>"
                                        "<p>If you are running Mac OS or Windows OS (from Vista onwards), you may have to use that system's software to set up partitions and boot manager before installing.</p>"
-                                       "<p>The ext2, ext3, ext4, jfs, xfs, btrfs and reiserfs Linux filesystems are supported and ext4 is recommended.</p>"));
+                                       "<p>The ext2, ext3, ext4, jfs, xfs, btrfs and reiserfs Linux filesystems are supported and ext4 is recommended.</p>").arg(MIN_INSTALL_SIZE).arg(PREFERRED_MIN_INSTALL_SIZE));
         break;
 
     case 2:
@@ -1920,7 +1923,7 @@ void MInstall::pageDisplayed(int next)
         ((MMain *)mmn)->setHelpText(tr("<p><b>Congratulations!</b><br/>You have completed the installation of %1</p>"
                                                                                                                                      "<p><b>Finding Applications</b><br/>There are hundreds of excellent applications installed with %1 "
                                                                                                                                      "The best way to learn about them is to browse through the Menu and try them. "
-                                                                                                                                     "Many of the apps were developed specifically for the Xfce environment. "
+                                                                                                                                     "Many of the apps were developed specifically for the %1 project. "
                                                                                                                                      "These are shown in the main menus. "
                                                                                                                                      "<p>In addition %1 includes many standard Linux applications that are run only from the command line and therefore do not show up in the Menu.</p>").arg(PROJECTNAME));
         nextButton->setEnabled(true);
