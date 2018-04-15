@@ -1,3 +1,9 @@
+mx-installer (18.4.09) mx; urgency=medium
+
+  * added Desktop/Installer.desktop to live-to-installed 
+
+ -- dolphinoracle <dolphin@mx>  Sat, 14 Apr 2018 19:46:31 -0400
+
 mx-installer (18.4.08) mx; urgency=medium
 
   * modified keyboard setup so that multiple keyboards stay enabled 
