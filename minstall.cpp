@@ -440,19 +440,22 @@ bool MInstall::makeSwapPartition(QString dev)
 // create ESP at the begining of the drive
 bool MInstall::makeEsp(QString drv, int size)
 {
-    int err = runCmd("parted -s " + drv + " mkpart primary 0 " + QString::number(size) + "MiB");
+    QString mmcnvmepartdesignator;
+    if (drv.contains("nvme") || drv.contains("mmcblk" )) {
+        mmcnvmepartdesignator = "p";
+    }
+    int err = runCmd("parted -s " + drv + " mkpart ESP 0 " + QString::number(size) + "MiB");
     if (err != 0) {
         qDebug() << "Could not create ESP";
         return false;
     }
 
-    runCmd("parted -s " + drv + " set 1 esp on");   // sets boot flag and esp flag
-
-    err = runCmd("mkfs.msdos -F 32 " + drv + "1");
+    err = runCmd("mkfs.msdos -F 32 " + drv + mmcnvmepartdesignator + "1");
     if (err != 0) {
         qDebug() << "Could not format ESP";
         return false;
     }
+    runCmd("parted -s " + drv + " set 1 esp on");   // sets boot flag and esp flag
     return true;
 }
 
@@ -553,6 +556,8 @@ bool MInstall::makeDefaultPartitions()
     int prog = 0;
     bool uefi = isUefi();
     bool arch64 = is64bit();
+    QString mmcnvmepartdesignator;
+    mmcnvmepartdesignator.clear();
 
     QString rootdev, swapdev;
 
@@ -564,6 +569,10 @@ bool MInstall::makeDefaultPartitions()
         return false;
     }
 
+    if (drv.contains("nvme") || drv.contains("mmcblk" )) {
+        mmcnvmepartdesignator = "p";
+    }
+
     // entire disk, create partitions
     updateStatus(tr("Creating required partitions"), ++prog);
 
@@ -572,7 +581,7 @@ bool MInstall::makeDefaultPartitions()
     system("/sbin/swapoff -a 2>&1");
 
     // unmount root part
-    rootdev = drv + "1";
+    rootdev = drv + mmcnvmepartdesignator + "1";
     QString cmd = QString("/bin/umount -l %1 >/dev/null 2>&1").arg(rootdev);
     if (system(cmd.toUtf8()) != 0) {
         qDebug() << "could not umount: " << rootdev;
@@ -602,7 +611,7 @@ bool MInstall::makeDefaultPartitions()
 
     // allocate space for ESP
     int esp_size = 0;
-    if(uefi && arch64) { // if booted from UEFI and 64bit
+    if(uefi) { // if booted from UEFI
         esp_size = 256;
         remaining -= esp_size;
     }
@@ -631,15 +640,15 @@ bool MInstall::makeDefaultPartitions()
         free = 0;
     }
 
-    if(uefi && arch64) { // if booted from UEFI and 64bit make ESP
+    if(uefi) { // if booted from UEFI make ESP
         // new GPT partition table
         int err = runCmd("parted -s " + drv + " mklabel gpt");
         if (err != 0 ) {
             qDebug() << "Could not create gpt partition table on " + drv;
             return false;
         }
-        rootdev = drv + "2";
-        swapdev = drv + "3";
+        rootdev = drv + mmcnvmepartdesignator + "2";
+        swapdev = drv + mmcnvmepartdesignator + "3";
         updateStatus(tr("Formating EFI System Partition (ESP)"), ++prog);
         if(!makeEsp(drv, esp_size)) {
             return false;
@@ -653,8 +662,8 @@ bool MInstall::makeDefaultPartitions()
             qDebug() << "Could not create msdos partition table on " + drv;
             return false;
         }
-        rootdev = drv + "1";
-        swapdev = drv + "2";
+        rootdev = drv + mmcnvmepartdesignator + "1";
+        swapdev = drv + mmcnvmepartdesignator + "2";
     }
 
     // create root partition
@@ -692,10 +701,13 @@ bool MInstall::makeDefaultPartitions()
         return false;
     }
 
-    if(uefi && arch64) { // set appropriate flags
-        runCmd("parted -s " + drv + " disk_set pmbr_boot on");
-    } else {
-        runCmd("parted -s " + drv + " set 1 boot on");
+    //if uefi is not detected, set flags based on GPT. Else don't set a flag...done by makeESP.
+    if(!uefi) { // set appropriate flags
+        if (isGpt(drv)) {
+            runCmd("parted -s " + drv + " disk_set pmbr_boot on");
+        } else {
+            runCmd("parted -s " + drv + " set 1 boot on");
+        }
     }
 
     system("sleep 1");
@@ -1049,18 +1061,34 @@ bool MInstall::installLoader()
     } else if (grubRootButton->isChecked()) {
         boot = rootpart;
     } else if (grubEspButton->isChecked()) {
-        if (entireDiskButton->isChecked()) { // don't use PMBR if installing on ESP and doing automatic partitioning
-            runCmd("parted -s /dev/" + bootdrv + " disk_set pmbr_boot off");
-        }
+//        if (entireDiskButton->isChecked()) { // don't use PMBR if installing on ESP and doing automatic partitioning
+//            runCmd("parted -s /dev/" + bootdrv + " disk_set pmbr_boot off");
+//        }
         // find first ESP on the boot disk
-        QString cmd = QString("partition-info find-esp=%1").arg(bootdrv);
-        boot = getCmdOut(cmd);
-        if (boot == "") {
-            qDebug() << "could not find ESP on: " << bootdrv;
-            return false;
-        }
-    }
 
+        QString cmd;
+
+        cmd = QString("partition-info find-esp=%1").arg(bootdrv);
+        boot = getCmdOut(cmd);
+
+        if (boot == "") {
+            //try fallback method
+            //modification for mmc/nmve devices that don't always update the parttype uuid
+            cmd = QString("parted " + bootdrv + " -l -m|grep -m 1 \"boot, esp\"|cut -d: -f1");
+            qDebug() << "parted command" << cmd;
+            boot = getCmdOut(cmd);
+            if (boot == "") {
+                qDebug() << "could not find ESP on: " << bootdrv;
+                return false;
+            }
+            if (bootdrv.contains("nmve") || bootdrv.contains("mmcblk")) {
+                boot = QString(bootdrv + "p" + boot);
+            } else {
+                boot = QString(bootdrv + boot);
+            }
+        }
+        qDebug() << "boot for grub routine = " << boot;
+    }
     // install Grub?
     QString msg = QString( tr("OK to install GRUB bootloader at %1 ?")).arg(boot);
     int ans = QMessageBox::warning(this, QString::null, msg,
@@ -1159,7 +1187,12 @@ bool MInstall::isGpt(QString drv)
 
 bool MInstall::isUefi()
 {
-    return (system("test -d /sys/firmware/efi") == 0);
+    // return false if not uefi, or if a bad combination, like 32 bit iso and 64 bit uefi)
+    if (system("uname -m | grep -q i686") == 0 && system("grep -q 64 /sys/firmware/efi/fw_platform_size") == 0) {
+        return false;
+    } else {
+       return (system("test -d /sys/firmware/efi") == 0);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
