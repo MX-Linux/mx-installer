@@ -1,3 +1,10 @@
+mx-installer (18.4.10) mx; urgency=medium
+
+  * added nvme mmcblk device detection
+  * added backup esp finder function 
+
+ -- dolphinoracle <dolphin@mx>  Mon, 16 Apr 2018 19:19:46 -0400
+
 mx-installer (18.4.09) mx; urgency=medium
 
   * added Desktop/Installer.desktop to live-to-installed 
