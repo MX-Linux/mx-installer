@@ -444,19 +444,18 @@ bool MInstall::makeEsp(QString drv, int size)
     if (drv.contains("nvme") || drv.contains("mmcblk" )) {
         mmcnvmepartdesignator = "p";
     }
-    int err = runCmd("parted -s " + drv + " mkpart primary 0 " + QString::number(size) + "MiB");
+    int err = runCmd("parted -s " + drv + " mkpart ESP 0 " + QString::number(size) + "MiB");
     if (err != 0) {
         qDebug() << "Could not create ESP";
         return false;
     }
-
-    runCmd("parted -s " + drv + " set 1 esp on");   // sets boot flag and esp flag
 
     err = runCmd("mkfs.msdos -F 32 " + drv + mmcnvmepartdesignator + "1");
     if (err != 0) {
         qDebug() << "Could not format ESP";
         return false;
     }
+    runCmd("parted -s " + drv + " set 1 esp on");   // sets boot flag and esp flag
     return true;
 }
 
@@ -1062,18 +1061,34 @@ bool MInstall::installLoader()
     } else if (grubRootButton->isChecked()) {
         boot = rootpart;
     } else if (grubEspButton->isChecked()) {
-        if (entireDiskButton->isChecked()) { // don't use PMBR if installing on ESP and doing automatic partitioning
-            runCmd("parted -s /dev/" + bootdrv + " disk_set pmbr_boot off");
-        }
+//        if (entireDiskButton->isChecked()) { // don't use PMBR if installing on ESP and doing automatic partitioning
+//            runCmd("parted -s /dev/" + bootdrv + " disk_set pmbr_boot off");
+//        }
         // find first ESP on the boot disk
-        QString cmd = QString("partition-info find-esp=%1").arg(bootdrv);
-        boot = getCmdOut(cmd);
-        if (boot == "") {
-            qDebug() << "could not find ESP on: " << bootdrv;
-            return false;
-        }
-    }
 
+        QString cmd;
+
+        cmd = QString("partition-info find-esp=%1").arg(bootdrv);
+        boot = getCmdOut(cmd);
+
+        if (boot == "") {
+            //try fallback method
+            //modification for mmc/nmve devices that don't always update the parttype uuid
+            cmd = QString("parted " + bootdrv + " -l -m|grep -m 1 \"boot, esp\"|cut -d: -f1");
+            qDebug() << "parted command" << cmd;
+            boot = getCmdOut(cmd);
+            if (boot == "") {
+                qDebug() << "could not find ESP on: " << bootdrv;
+                return false;
+            }
+            if (bootdrv.contains("nmve") || bootdrv.contains("mmcblk")) {
+                boot = QString(bootdrv + "p" + boot);
+            } else {
+                boot = QString(bootdrv + boot);
+            }
+        }
+        qDebug() << "boot for grub routine = " << boot;
+    }
     // install Grub?
     QString msg = QString( tr("OK to install GRUB bootloader at %1 ?")).arg(boot);
     int ans = QMessageBox::warning(this, QString::null, msg,
