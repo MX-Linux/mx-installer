@@ -2,7 +2,7 @@ mx-installer (18.4.04mx17) mx; urgency=medium
 
   * nvme vs. nmve type fix 
 
- -- dolphin oracle <dolphin@mx>  Wed, 18 Apr 2018 17:30:11 -0400
+ -- Adrian <adrian@mxlinux.org>  Wed, 18 Apr 2018 17:42:29 -0400
 
 mx-installer (18.4.03mx17) mx; urgency=medium
 
